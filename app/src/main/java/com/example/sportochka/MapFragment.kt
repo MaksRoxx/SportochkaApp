@@ -15,7 +15,7 @@ class MapFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         val bot = requireActivity().findViewById<BottomNavigationView>(R.id.bottomNavigationView)
         bot.visibility = View.VISIBLE
         setApiKey(savedInstanceState)
