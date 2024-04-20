@@ -21,7 +21,11 @@ class GreetingFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         Handler(requireActivity().mainLooper).postDelayed({
-            findNavController().navigate(R.id.action_greetingFragment_to_qrFragment)
+            if (true) {
+                findNavController().navigate(R.id.action_greetingFragment_to_authFragment)
+            } else {
+                findNavController().navigate(R.id.action_greetingFragment_to_qrFragment)
+            }
         }, 3000L)
     }
 }

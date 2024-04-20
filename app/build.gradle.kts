@@ -43,6 +43,9 @@ dependencies {
     implementation("com.google.zxing:core:1.2.2")
     implementation("com.journeyapps:zxing-android-embedded:4.3.0")
 
+    //yandax mapkit
+    implementation("com.yandex.android:maps.mobile:4.4.0-full")
+
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
