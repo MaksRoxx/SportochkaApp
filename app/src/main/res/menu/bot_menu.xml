@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:id="@+id/qrFragment"
+        android:icon="@drawable/qr_boottom_icon"
+        android:title="Qr"/>
+    <item android:id="@+id/mapFragment"
+        android:icon="@drawable/planet_bottom_icon"
+        android:title="Map"/>
+    <item android:id="@+id/profileFragment"
+        android:icon="@drawable/profile_bottom_icon"
+        android:title="Profile"/>
+</menu>
