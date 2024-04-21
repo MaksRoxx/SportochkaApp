@@ -1,29 +1,86 @@
 package com.example.sportochka
 
+import android.Manifest
+import android.content.pm.PackageManager
+import android.graphics.PointF
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.view.isVisible
+import androidx.core.app.ActivityCompat
+import androidx.fragment.app.Fragment
 import com.example.sportochka.databinding.FragmentMapBinding
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.yandex.mapkit.Animation
 import com.yandex.mapkit.MapKitFactory
+import com.yandex.mapkit.geometry.Point
+import com.yandex.mapkit.layers.GeoObjectTapEvent
+import com.yandex.mapkit.layers.GeoObjectTapListener
+import com.yandex.mapkit.layers.ObjectEvent
+import com.yandex.mapkit.location.Location
+import com.yandex.mapkit.location.LocationListener
+import com.yandex.mapkit.location.LocationManager
+import com.yandex.mapkit.location.LocationStatus
+import com.yandex.mapkit.map.CameraListener
+import com.yandex.mapkit.map.CameraPosition
+import com.yandex.mapkit.map.CameraUpdateReason
+import com.yandex.mapkit.map.GeoObjectSelectionMetadata
+import com.yandex.mapkit.map.InputListener
+import com.yandex.mapkit.map.Map
+import com.yandex.mapkit.map.MapWindow
+import com.yandex.mapkit.user_location.UserLocationLayer
+import com.yandex.mapkit.user_location.UserLocationObjectListener
+import com.yandex.mapkit.user_location.UserLocationView
 
-class MapFragment : Fragment() {
+
+class MapFragment : Fragment(), CameraListener, UserLocationObjectListener {
     private lateinit var binding: FragmentMapBinding
+    private lateinit var map: Map
+    private lateinit var mapWindow: MapWindow
+    private lateinit var locationMapKit: UserLocationLayer
+    private var zoomValue: Float = 16.5f
+    private var startLocation = Point(0.0, 0.0)
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val bot = requireActivity().findViewById<BottomNavigationView>(R.id.bottomNavigationView)
-        bot.visibility = View.VISIBLE
         setApiKey(savedInstanceState)
         MapKitFactory.initialize(requireContext())
+
+        binding = FragmentMapBinding.inflate(inflater, container, false)
+        val bot = requireActivity().findViewById<BottomNavigationView>(R.id.bottomNavigationView)
+        bot.visibility = View.VISIBLE
+
+        mapWindow =binding.mapview.mapWindow
+        map = mapWindow.map
+        binding.mapview.map.addTapListener(geoObjectTapListener) // Добавляем слушатель тапов по объектам
+        map.addInputListener(inputListener)
         binding = FragmentMapBinding.inflate(layoutInflater, container, false)
         return binding.root
 
     }
+
+    private val geoObjectTapListener = object : GeoObjectTapListener {
+        override fun onObjectTap(geoObjectTapEvent: GeoObjectTapEvent): Boolean {
+            val selectionMetadata: GeoObjectSelectionMetadata = geoObjectTapEvent
+                .geoObject
+                .metadataContainer
+                .getItem(GeoObjectSelectionMetadata::class.java)
+            binding.mapview.map.selectGeoObject(selectionMetadata)
+            return false
+        }
+    }
+
+    private val inputListener = object : InputListener {
+        override fun onMapLongTap(map: com.yandex.mapkit.map.Map, point: Point) {
+            // передвижение метки при долгом нажатии
+            //placemarkMapObject.geometry = point
+        }
+        override fun onMapTap(map: com.yandex.mapkit.map.Map, point: Point) {
+        }
+    }
+
 
     private fun setApiKey(savedInstanceState: Bundle?) {
         val haveApiKey = savedInstanceState?.getBoolean("haveApiKey")
@@ -39,10 +96,41 @@ class MapFragment : Fragment() {
         outState.putBoolean("haveApiKey", true)
     }
 
+
     // Отображаем карты перед моментом, когда активити с картой станет видимой пользователю:
     override fun onStart() {
+
         super.onStart()
-        MapKitFactory.getInstance().onStart()
+        var mapKit = MapKitFactory.getInstance()
+
+        locationMapKit = mapKit.createUserLocationLayer(binding.mapview.mapWindow)
+        locationMapKit.isVisible = true
+        locationMapKit.setObjectListener(this)
+
+        requestLocationPermission()
+        moveToStartLocation()
+
+
+        mapKit.onStart()
+
+    }
+
+
+
+    private fun requestLocationPermission(){
+        if(ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION)!= PackageManager.PERMISSION_GRANTED &&
+            ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_COARSE_LOCATION)!= PackageManager.PERMISSION_GRANTED){
+            ActivityCompat.requestPermissions(requireActivity(), arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION),100)
+            return
+        }
+    }
+
+    private fun moveToStartLocation() {
+        binding.mapview.map.move(
+            CameraPosition(startLocation, zoomValue, 0.0f, 0.0f),
+            Animation(Animation.Type.SMOOTH, 5f),
+            null
+        )
     }
 
     // Останавливаем обработку карты, когда активити с картой становится невидимым для пользователя:
@@ -53,5 +141,30 @@ class MapFragment : Fragment() {
 
     companion object {
         const val MAPKIT_API_KEY = "6ef8d0c5-2284-480e-aac8-1282e21b2c6b"
+    }
+
+    override fun onObjectAdded(p0: UserLocationView) {
+        locationMapKit.setAnchor(
+            PointF((binding.mapview.width *0.5).toFloat(),(binding.mapview.height*0.5).toFloat()),
+            PointF((binding.mapview.width *0.5).toFloat(),(binding.mapview.height*0.83).toFloat())
+        )
+
+    }
+
+    override fun onObjectRemoved(p0: UserLocationView) {
+        TODO("Not yet implemented")
+    }
+
+    override fun onObjectUpdated(p0: UserLocationView, p1: ObjectEvent) {
+        TODO("Not yet implemented")
+    }
+
+    override fun onCameraPositionChanged(
+        p0: Map,
+        p1: CameraPosition,
+        p2: CameraUpdateReason,
+        p3: Boolean
+    ) {
+        TODO("Not yet implemented")
     }
 }
