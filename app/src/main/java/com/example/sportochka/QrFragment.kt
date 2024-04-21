@@ -2,8 +2,6 @@ package com.example.sportochka
 
 import android.graphics.Bitmap
 import android.os.Bundle
-import android.os.Environment
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -43,7 +41,7 @@ class QrFragment : Fragment() {
 
         binding.button.setOnClickListener {
             val options = ScanOptions()
-            options.setPrompt("")
+            options.setPrompt("Наведите камеру для сканирования qr кода")
             options.setOrientationLocked(false)
             barcodeLauncher.launch(options)
         }
