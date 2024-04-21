@@ -1,12 +1,14 @@
 package com.example.sportochka
 
 import android.Manifest
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.PointF
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import com.example.sportochka.databinding.FragmentMapBinding
@@ -25,12 +27,19 @@ import com.yandex.mapkit.map.CameraListener
 import com.yandex.mapkit.map.CameraPosition
 import com.yandex.mapkit.map.CameraUpdateReason
 import com.yandex.mapkit.map.GeoObjectSelectionMetadata
+import com.yandex.mapkit.map.IconStyle
 import com.yandex.mapkit.map.InputListener
 import com.yandex.mapkit.map.Map
+import com.yandex.mapkit.map.MapObject
+import com.yandex.mapkit.map.MapObjectTapListener
 import com.yandex.mapkit.map.MapWindow
+import com.yandex.mapkit.map.PlacemarkMapObject
 import com.yandex.mapkit.user_location.UserLocationLayer
 import com.yandex.mapkit.user_location.UserLocationObjectListener
 import com.yandex.mapkit.user_location.UserLocationView
+import com.yandex.runtime.image.ImageProvider
+import java.util.Random
+import androidx.fragment.app.FragmentManager
 
 
 class MapFragment : Fragment(), CameraListener, UserLocationObjectListener {
@@ -40,6 +49,7 @@ class MapFragment : Fragment(), CameraListener, UserLocationObjectListener {
     private lateinit var locationMapKit: UserLocationLayer
     private var zoomValue: Float = 16.5f
     private var startLocation = Point(0.0, 0.0)
+    private lateinit var placemarkMapObject: PlacemarkMapObject
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -76,10 +86,56 @@ class MapFragment : Fragment(), CameraListener, UserLocationObjectListener {
         override fun onMapLongTap(map: com.yandex.mapkit.map.Map, point: Point) {
             // передвижение метки при долгом нажатии
             //placemarkMapObject.geometry = point
+            var flag = false
+            var text_d = ""
+            val dialog = DialogPMarkFragment.newInstance(text = "Описание", hint = "Description", isMultiline = true)
+            dialog.onOk = {
+                text_d = dialog.editText.text.toString()
+                // do something
+                flag = true
+                createPlacemark(point)
+            }
+            dialog.onCancel = {
+                flag = false
+            }
+            if (flag){
+                // создание метки при нажатии кнопки ok
+                createPlacemark(point)
+                placemarkMapObject.setText(text_d)
+            }
+
         }
         override fun onMapTap(map: com.yandex.mapkit.map.Map, point: Point) {
         }
     }
+    private fun createPlacemark(point: Point) {
+        placemarkMapObject = map.mapObjects.addPlacemark(
+            point,
+            ImageProvider.fromResource(requireActivity(), R.drawable.ic_ya_pin),
+            IconStyle().apply { anchor = PointF(0.5f, 1.0f) }
+        ).apply {
+            isDraggable = true
+        }
+        placemarkMapObject.addTapListener(placemarkTapListener)
+    }
+    private var placemarkTapListener: MapObjectTapListener =
+        object: MapObjectTapListener {
+            override fun onMapObjectTap(mapObject: MapObject, point: Point): Boolean {
+                if (mapObject is PlacemarkMapObject) {
+                    val placemark = mapObject
+
+                    val toast = Toast.makeText(
+                        requireContext(),
+                        ("Placemark tapped"),
+                        Toast.LENGTH_SHORT
+                    )
+                    toast.show()
+                    val intent = Intent(requireContext(), MapFragment::class.java)
+                    startActivity(intent)
+                }
+                return true
+            }
+        }
 
 
     private fun setApiKey(savedInstanceState: Bundle?) {
