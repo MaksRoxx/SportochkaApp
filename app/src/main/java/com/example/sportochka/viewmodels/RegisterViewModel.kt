@@ -13,6 +13,8 @@ import kotlinx.coroutines.launch
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.ResponseBody
+import retrofit2.Call
+import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -50,14 +52,24 @@ class RegisterViewModel() : ViewModel() {
 
 
     fun inst(basic: data_login) {
-        val appDao = Retrofit.Builder()
+        val retrofit = Retrofit.Builder()
             .baseUrl(AppDao.BASE_URL).client(okhttpv1(basic))
             .addConverterFactory(GsonConverterFactory.create())
             .build()
-            .create(AppDao::class.java)
-        viewModelScope.launch {
-            // appDao.register(basic.name+basic.password)
-        }
+        val appDao =  retrofit.create(AppDao::class.java)
+
+        //viewModelScope.launch {
+          //  appDao.register("wgediuewgeuwg")
+        //}
+        appDao.login("wugefiuewge").enqueue(object: Callback<String>{
+            override fun onResponse(call: Call<String>, response: Response<String>) {
+                response.code()
+            }
+
+            override fun onFailure(call: Call<String>, t: Throwable) {
+                //t
+            }
+        })
     }
 
     // Функция для регистрации с обычной аутентификацией

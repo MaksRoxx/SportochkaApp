@@ -1,6 +1,7 @@
 package com.example.sportochka.data
 
 import com.google.gson.JsonObject
+import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.Header
@@ -9,10 +10,10 @@ import retrofit2.http.Query
 
 interface AppDao {
     @POST("user/register")
-    suspend fun register(@Header("Authorization") user: String)
+    fun register(@Header("Authorization") user: String)
 
     @POST("user/login")
-    suspend fun login(@Header("Authorization") user: String): String
+    fun login(@Header("Authorization") user: String): Call<String>
 
     @GET("profile")
     suspend fun getProfile(): AllOutProfile

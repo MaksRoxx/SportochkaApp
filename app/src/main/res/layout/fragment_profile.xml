@@ -20,17 +20,18 @@
 
         <ImageView
             android:id="@+id/avatar"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/ic_launcher_foreground" />
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:src="@drawable/image_3" />
     </androidx.cardview.widget.CardView>
 
     <TextView
+        android:textSize="18sp"
         android:id="@+id/name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
-        android:text="name - Dora"
+        android:text="Dora"
         app:layout_constraintBottom_toBottomOf="@+id/cardView"
         app:layout_constraintStart_toEndOf="@+id/cardView"
         app:layout_constraintTop_toTopOf="@+id/cardView"
@@ -39,6 +40,7 @@
     <TextView
         android:id="@+id/friends"
         android:layout_width="wrap_content"
+        android:textSize="20sp"
         android:layout_height="wrap_content"
         android:layout_marginTop="32dp"
         android:text="Друзья"
@@ -47,16 +49,33 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/cardView" />
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/listFriends"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/friends" />
+    <androidx.cardview.widget.CardView
+        android:layout_marginTop="40dp"
+        android:id="@+id/cardVi"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:cardCornerRadius="100dp"
+        app:cardElevation="0dp"
+        app:layout_constraintEnd_toEndOf="@+id/friends"
+        app:layout_constraintStart_toStartOf="@+id/friends"
+        app:layout_constraintTop_toBottomOf="@+id/friends">
+
+        <ImageView
+            android:id="@+id/avat"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:src="@drawable/image_12" />
+    </androidx.cardview.widget.CardView>
+
+    <TextView
+        android:textSize="16sp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:text="Bob"
+        app:layout_constraintBottom_toBottomOf="@+id/cardVi"
+        app:layout_constraintStart_toEndOf="@+id/cardVi"
+        app:layout_constraintTop_toTopOf="@+id/cardVi"
+        app:layout_constraintVertical_bias="0.32999998" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

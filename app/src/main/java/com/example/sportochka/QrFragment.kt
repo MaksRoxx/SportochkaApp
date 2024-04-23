@@ -33,7 +33,7 @@ class QrFragment : Fragment() {
         try {
             val barkodeEncode = BarcodeEncoder()
             val bitmap: Bitmap = barkodeEncode
-                .encodeBitmap("maks koks", BarcodeFormat.QR_CODE, 750, 750)
+                .encodeBitmap("Bob", BarcodeFormat.QR_CODE, 750, 750)
             binding.imageView.setImageBitmap(bitmap)
         } catch (e: Exception) {
             e.printStackTrace()
@@ -55,7 +55,7 @@ class QrFragment : Fragment() {
         } else {
             Toast.makeText(
                 requireContext(),
-                "Scanned: " + result.contents,
+                "Scanned: friend added",
                 Toast.LENGTH_LONG
             ).show()
         }
